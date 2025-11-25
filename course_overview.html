@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Course Plan: AI-Driven Revit Automation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Warm & Welcoming -->
+    <!-- Application Structure Plan: A single-page, vertically scrolling SPA with a sticky side-navigation. This structure allows users to get a quick overview and then dive into specific modules (Module 1, 2, 3, Capstone, Gotchas) in any order. Interactive elements like tabs (Mod 2), an accordion (Gotchas), and HTML-based diagrams (Context Triangle, Debug Loop, Folder Structure) are used to make abstract concepts more tangible and digestible, which is more effective for a curriculum than a static document. -->
+    <!-- Visualization & Content Choices: 
+        - Learning Objectives (Goal: Inform) -> Interactive HTML/Tailwind cards -> Hover interaction -> More engaging than a list.
+        - Context Triangle (Goal: Organize) -> HTML/Tailwind diagram -> Static -> Visually reinforces the 3-part concept.
+        - Iterative Debug Loop (Goal: Organize/Process) -> HTML/Tailwind flowchart -> Static -> Clearly shows the feedback loop.
+        - Dynamo vs. Python (Goal: Compare) -> Side-by-side HTML/CSS pseudo-diagram and code block -> Static -> Visually contrasts complexity with simplicity.
+        - Module 2 Examples (Goal: Inform) -> JS-powered Tabbed Interface -> Click interaction -> Organizes 3 examples compactly.
+        - pyRevit Folder Structure (Goal: Organize/Hierarchy) -> Styled nested HTML list -> Static -> Clearly visualizes the required hierarchy.
+        - Capstone Project (Goal: Organize/Process) -> Horizontal HTML/Tailwind flowchart -> Static -> Shows the 4-step development process.
+        - "Gotchas" (Goal: Inform) -> JS-powered Accordion -> Click interaction -> Hides fixes until needed, making problems scannable.
+        - No Chart.js/Plotly.js used, as the source report is a curriculum and contains no quantitative data to plot. Visualizations are structural/process-based.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF6;
+            color: #3E2723;
+        }
+        .sticky-nav a {
+            transition: all 0.2s ease-in-out;
+        }
+        .sticky-nav a.active {
+            color: #4682B4;
+            border-left-color: #4682B4;
+            transform: translateX(4px);
+            font-weight: 600;
+        }
+        .pseudo-dynamo-node {
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            text-align: center;
+            margin: 4px;
+            position: relative;
+        }
+        .pseudo-dynamo-connector {
+            width: 50%;
+            height: 2px;
+            background-color: #bbb;
+            margin-left: 50%;
+        }
+        .accordion-content {
+            display: none;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .tab-btn.active {
+            background-color: #6D4C41;
+            color: #FDFBF6;
+        }
+        .logo {
+            size: auto;
+            margin-bottom: 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="antialiased">
+
+    <div class="relative flex">
+                
+        <nav class="sticky top-0 h-screen w-64 hidden md:block p-8 border-r border-gray-200" style="border-color: #E0E0E0;">
+            <img src="schema logo.png" class="logo">
+            <h2 class="font-bold text-lg mb-4" style="color: #6D4C41;">Course Sections</h2>
+            
+            <div class="sticky-nav flex flex-col space-y-2">
+                <a href="#overview" class="block py-1 text-sm border-l-2 border-transparent" style="color: #6D4C41; border-color: transparent;">Overview</a>
+                <a href="#module1" class="block py-1 text-sm border-l-2 border-transparent" style="color: #6D4C41; border-color: transparent;">Module 1: AI Foundation</a>
+                <a href="#module2" class="block py-1 text-sm border-l-2 border-transparent" style="color: #6D4C41; border-color: transparent;">Module 2: Dynamo</a>
+                <a href="#module3" class="block py-1 text-sm border-l-2 border-transparent" style="color: #6D4C41; border-color: transparent;">Module 3: pyRevit</a>
+                <a href="#capstone" class="block py-1 text-sm border-l-2 border-transparent" style="color: #6D4C41; border-color: transparent;">Capstone Project</a>
+                <a href="#gotchas" class="block py-1 text-sm border-l-2 border-transparent" style="color: #6D4C41; border-color: transparent;">Common "Gotchas"</a>
+            </div>
+        </nav>
+
+        <main class="flex-1 max-w-5xl mx-auto p-6 md:p-12">
+            
+            <header class="mb-12">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4" style="color: #3E2723;">AI-Driven Revit Automation</h1>
+                <p class="text-xl" style="color: #6D4C41;">This course empowers BIM professionals to automate Revit without spending years learning to code. By leveraging Large Language Models (LLMs), you will learn to generate, debug, and deploy Python scripts for Dynamo and pyRevit.</p>
+                
+            </header>
+
+            <section id="overview" class="mb-16 space-y-8 scroll-mt-20">
+                <h2 class="text-3xl font-bold" style="color: #6D4C41;">Course Overview</h2>
+                
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4" style="color: #3E2723;">Learning Objectives</h3>
+                    <p class="mb-6 text-lg" style="color: #6D4C41;">This course is designed to take you from a Revit user to a proficient automator. You will not just learn *what* to do, but *how* to think like a developer, using AI as your co-pilot to build powerful tools.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4" style="border-color: #4682B4;">
+                            <h4 class="text-xl font-bold mb-2" style="color: #3E2723;">Prompt Effectively</h4>
+                            <p style="color: #6D4C41;">Learn to ask AI for functional Revit API code using the "Context Triangle" framework.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4" style="border-color: #4682B4;">
+                            <h4 class="text-xl font-bold mb-2" style="color: #3E2723;">Debug & Fix</h4>
+                            <p style="color: #6D4C41;">Master the "Iterative Debugging" loop to identify and fix common AI hallucinations and errors.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4" style="border-color: #4682B4;">
+                            <h4 class="text-xl font-bold mb-2" style="color: #3E2723;">Replace "Node Spaghetti"</h4>
+                            <p style="color: #6D4C41;">Move beyond complex Dynamo graphs by replacing them with clean, efficient Python nodes.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4" style="border-color: #4682B4;">
+                            <h4 class="text-xl font-bold mb-2" style="color: #3E2723;">Deploy Custom Tools</h4>
+                            <p style="color: #6D4C41;">Build and deploy professional add-ins to your company's Revit ribbon using pyRevit.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4" style="color: #3E2723;">Required Software</h3>
+                    <p class="mb-6 text-lg" style="color: #6D4C41;">To follow along with the course, you will need access to the following tools. This stack is the modern standard for Revit automation.</p>
+                    <ul class="list-disc list-inside space-y-2 text-lg" style="color: #6D4C41;">
+                        <li>Revit 2024 or later (for Python 3 support)</li>
+                        <li>Dynamo (Pre-installed with Revit)</li>
+                        <li>pyRevit (Latest Version)</li>
+                        <li>An account for an advanced LLM (ChatGPT Plus, Claude Pro, etc.)</li>
+                        <li>VS Code (Recommended for editing script files)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="module1" class="mb-16 space-y-8 scroll-mt-20">
+                <h2 class="text-3xl font-bold" style="color: #6D4C41;">Module 1: The AI Co-Pilot Foundation</h2>
+                <p class="text-lg mb-6" style="color: #6D4C41;">This module is the most critical. You will learn how to communicate with LLMs to get predictable, high-quality code. This section focuses on avoiding "garbage in, garbage out" by understanding how to ask questions correctly.</p>
+
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4" style="color: #3E2723;">The Context Triangle</h3>
+                    <p class="mb-6 text-lg" style="color: #6D4C41;">Your most important tool is the prompt. A good prompt provides three pieces of context to the AI to ensure a relevant and accurate response. We call this the "Context Triangle."</p>
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="flex-1 bg-white p-6 rounded-lg shadow-lg text-center">
+                            <span class="text-5xl">👤</span>
+                            <h4 class="text-xl font-bold my-2" style="color: #3E2723;">ROLE</h4>
+                            <p class="text-sm" style="color: #6D4C41;">"You are a Senior Revit API Developer."</p>
+                        </div>
+                        <div class="flex-1 bg-white p-6 rounded-lg shadow-lg text-center">
+                            <span class="text-5xl">🎯</span>
+                            <h4 class="text-xl font-bold my-2" style="color: #3E2723;">TASK</h4>
+                            <p class="text-sm" style="color: #6D4C41;">"Write a script to delete all unplaced rooms."</p>
+                        </div>
+                        <div class="flex-1 bg-white p-6 rounded-lg shadow-lg text-center">
+                            <span class="text-5xl">📋</span>
+                            <h4 class="text-xl font-bold my-2" style="color: #3E2723;">CONSTRAINT</h4>
+                            <p class="text-sm" style="color: #6D4C41;">"Use the Revit 2024 API, Python 3, and include error handling."</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4" style="color: #3E2723;">The "Iterative Debugging" Loop</h3>
+                    <p class="mb-6 text-lg" style="color: #6D4C41;">AI code will fail. The key is not to get frustrated, but to use the error as part of the conversation. This workflow, which we call "Feeding the Error," is the fastest way to a working script.</p>
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 bg-white p-6 rounded-lg shadow-lg">
+                        <div class="p-4 rounded-lg text-center border-2" style="border-color: #4682B4; background-color: #F0F8FF;">
+                            <h4 class="font-semibold" style="color: #3E2723;">1. Generate Code</h4>
+                            <p class="text-sm" style="color: #6D4C41;">Give the AI a prompt using the Context Triangle.</p>
+                        </div>
+                        <span class="text-4xl font-light md:rotate-0 rotate-90" style="color: #4682B4;">→</span>
+                        <div class="p-4 rounded-lg text-center border-2" style="border-color: #E6B800; background-color: #FFFBEB;">
+                            <h4 class="font-semibold" style="color: #3E2723;">2. Get Error</h4>
+                            <p class="text-sm" style="color: #6D4C41;">Run the code in Revit/Dynamo and get an error message.</p>
+                        </div>
+                        <span class="text-4xl font-light md:rotate-0 rotate-90" style="color: #4682B4;">→</span>
+                        <div class="p-4 rounded-lg text-center border-2" style="border-color: #D32F2F; background-color: #FFF1F0;">
+                            <h4 class="font-semibold" style="color: #3E2723;">3. "Feed" the Error</h4>
+                            <p class="text-sm" style="color: #6D4C41;">Copy/paste the *exact* error back to the AI.</p>
+                        </div>
+                        <span class="text-4xl font-light md:rotate-0 rotate-90" style="color: #4682B4;">↺</span>
+                    </div>
+                </div>
+            </section>
+
+            <section id="module2" class="mb-16 space-y-8 scroll-mt-20">
+                <h2 class="text-3xl font-bold" style="color: #6D4C41;">Module 2: AI-Powered Dynamo Scripting</h2>
+                <p class="text-lg mb-6" style="color: #6D4C41;">In this module, you'll apply your new AI skills to Dynamo. The goal is to stop relying on finding the right nodes and instead use AI to write powerful, compact Python scripts that do the work for you.</p>
+
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4" style="color: #3E2723;">Replace "Node Spaghetti"</h3>
+                    <p class="mb-6 text-lg" style="color: #6D4C41;">Complex Dynamo graphs are hard to read, debug, and share. A single, well-prompted Python node can replace dozens of regular nodes, making your scripts clean and efficient.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="bg-white p-6 rounded-lg shadow-lg">
+                            <h4 class="text-xl font-bold text-center mb-4" style="color: #D32F2F;">BEFORE: "Node Spaghetti"</h4>
+                            <div class="flex flex-col items-center p-4 rounded-lg bg-gray-50 h-64 overflow-hidden relative">
+                                <div class="pseudo-dynamo-node w-3/4">Element.GetParameterValueByName</div>
+                                <div class="pseudo-dynamo-connector" style="margin-left: 25%; width: 25%;"></div>
+                                <div class="pseudo-dynamo-node w-3/4">String.Concat</div>
+                                <div class="pseudo-dynamo-connector"></div>
+                                <div class="pseudo-dynamo-node w-3/4">Element.SetParameterByName</div>
+                                <div class="pseudo-dynamo-connector" style="margin-left: 10%; width: 80%;"></div>
+                                <div class="pseudo-dynamo-node w-3/4">List.Map</div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg">
+                            <h4 class="text-xl font-bold text-center mb-4" style="color: #2E7D32;">AFTER: AI-Generated Python</h4>
+                            <div class="p-4 rounded-lg bg-gray-900 h-64 overflow-auto">
+<pre class="text-sm text-gray-200">
+import clr
+clr.AddReference('RevitServices')
+from RevitServices.Persistence import DocumentManager
+clr.AddReference('RevitAPI')
+from Autodesk.Revit.DB import Transaction
+
+doc = DocumentManager.Instance.CurrentDBDocument
+views = UnwrapElement(IN[0])
+prefix = "Draft-"
+
+t = Transaction(doc, "Add View Prefix")
+t.Start()
+for view in views:
+    try:
+        view.Name = prefix + view.Name
+    except:
+        pass
+t.Commit()
+
+OUT = views
+</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4" style="color: #3E2723;">Text-to-Script Workflow</h3>
+                    <p class="mb-6 text-lg" style="color: #6D4C41;">We will practice our new workflow with several hands-on labs. You will be given a problem and will use an LLM to generate the Python script for a Dynamo node.</p>
+                    <div class="bg-white rounded-lg shadow-lg">
+                        <div class="flex border-b" style="border-color: #E0E0E0;">
+                            <button class="tab-btn flex-1 p-4 font-semibold active" data-tab="tab1" style="color: #6D4C41;">Exercise A: Bulk Renamer</button>
+                            <button class="tab-btn flex-1 p-4 font-semibold" data-tab="tab2" style="color: #6D4C41;">Exercise B: Geometry Creation</button>
+                            <button class="tab-btn flex-1 p-4 font-semibold" data-tab="tab3" style="color: #6D4C41;">Exercise C: Data Mining</button>
+                        </div>
+                        <div class="p-6">
+                            <div id="tab1" class="tab-content active">
+                                <h4 class="text-xl font-bold mb-2">Prompt: The Bulk Renamer</h4>
+                                <p class="text-lg mb-4" style="color: #ffffff;">"Write a Python script for Dynamo. Input 0 is a list of Views. The script should add the prefix 'Draft-' to the View Name."</p>
+                                <strong style="color: #3E2723;">Key Lessons:</strong>
+                                <ul class="list-disc list-inside mt-2" style="color: #6D4C41;">
+                                    <li>Handling lists of elements (`IN[0]`)</li>
+                                    <li>Using Transactions to modify the model</li>
+                                    <li>Setting an element's parameter (Name)</li>
+                                </ul>
+                            </div>
+                            <div id="tab2" class="tab-content">
+                                <h4 class="text-xl font-bold mb-2">Prompt: Geometry Creation</h4>
+                                <p class="text-lg mb-4" style="color: #ffffff;">"Create a list of model lines forming a grid pattern based on X and Y inputs."</p>
+                                <strong style="color: #3E2723;">Key Lessons:</strong>
+                                <ul class="list-disc list-inside mt-2" style="color: #6D4C41;">
+                                    <li>Importing Revit API geometry classes</li>
+                                    <li>Using `for` loops to create multiple objects</li>
+                                    <li>Needing a Transaction to create new elements</li>
+                                </ul>
+                            </div>
+                            <div id="tab3" class="tab-content">
+                                <h4 class="text-xl font-bold mb-2">Prompt: Data Mining</h4>
+                                <p class="text-lg mb-4" style="color: #ffffff;">"Select all Walls in the active view, get their 'Volume' parameter, and sum the total volume."</p>
+                                <strong style="color: #3E2723;">Key Lessons:</strong>
+                                <ul class="list-disc list-inside mt-2" style="color: #6D4C41;">
+                                    <li>Using `FilteredElementCollector` to find elements</li>
+                                    <li>Accessing built-in parameters (`BuiltInParameter.HOST_VOLUME_COMPUTED`)</li>
+                                    <li>Aggregating data and outputting to `OUT`</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="module3" class="mb-16 space-y-8 scroll-mt-20">
+                <h2 class="text-3xl font-bold" style="color: #6D4C41;">Module 3: Building Professional Add-ins with pyRevit</h2>
+                <p class="text-lg mb-6" style="color: #6D4C41;">This module takes you beyond personal scripts and into the world of professional tool deployment. You'll learn to use pyRevit to create custom toolbars and buttons that you can share with your entire team.</p>
+
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4" style="color: #3E2723;">The "Magic" Folder Structure</h3>
+                    <p class="mb-6 text-lg" style="color: #6D4C41;">pyRevit's greatest strength is its simplicity. You don't need to compile code. You simply create a specific folder structure, and pyRevit reads it to build your UI automatically. This diagram shows the required hierarchy.</p>
+                    <div class="bg-white p-6 rounded-lg shadow-lg font-mono text-sm" style="color: #3E2723;">
+                        <div class="border-l-2 pl-4" style="border-color: #6D4C41;">
+                            <strong>MyCompany.extension/</strong>
+                            <div class="border-l-2 pl-4 mt-2" style="border-color: #6D4C41;">
+                                <strong>MyTools.tab/</strong>
+                                <div class="border-l-2 pl-4 mt-2" style="border-color: #6D4C41;">
+                                    <strong>Modeling.panel/</strong>
+                                    <div class="border-l-2 pl-4 mt-2" style="border-color: #4682B4;">
+                                        <strong>QuickWall.pushbutton/</strong>
+                                        <div class="pl-4 mt-2" style="color: #6D4C41;">
+                                            <p>├── script.py (Your Python code)</p>
+                                            <p>├── icon.png (Your button icon)</p>
+                                            <p>└── bundle.yaml (Button metadata)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="capstone" class="mb-16 space-y-8 scroll-mt-20">
+                <h2 class="text-3xl font-bold" style="color: #6D4C41;">Capstone Project: "The Excel-to-Sheet Generator"</h2>
+                <p class="text-lg mb-6" style="color: #6D4C41;">The capstone project combines everything you've learned. You will build a full pyRevit button that reads an Excel file and automatically creates new sheets in your Revit project, saving hours of manual setup.</p>
+                <p class="text-lg mb-6" style="color: #6D4C41;">This diagram shows the development workflow. You will use the AI to generate the code for each step, then assemble them into the final `script.py` file for your pyRevit button.</p>
+
+                <div class="flex flex-col md:flex-row items-stretch justify-between space-y-4 md:space-y-0 md:space-x-4">
+                    <div class="flex-1 p-6 rounded-lg text-center shadow-lg bg-white">
+                        <span class="text-5xl">1️⃣</span>
+                        <h4 class="text-xl font-bold my-2" style="color: #3E2723;">Step 1: The UI</h4>
+                        <p class="text-sm" style="color: #6D4C41;">Prompt AI to write code for a file picker using `pyRevit.forms`.</p>
+                    </div>
+                    <span class="text-4xl font-light md:rotate-0 rotate-90 mx-auto" style="color: #4682B4;">→</span>
+                    <div class="flex-1 p-6 rounded-lg text-center shadow-lg bg-white">
+                        <span class="text-5xl">2️⃣</span>
+                        <h4 class="text-xl font-bold my-2" style="color: #3E2723;">Step 2: Data Parsing</h4>
+                        <p class="text-sm" style="color: #6D4C41;">Prompt AI to use `pandas` to read sheet numbers and names from the selected Excel file.</p>
+                    </div>
+                    <span class="text-4xl font-light md:rotate-0 rotate-90 mx-auto" style="color: #4682B4;">→</span>
+                    <div class="flex-1 p-6 rounded-lg text-center shadow-lg bg-white">
+                        <span class="text-5xl">3️⃣</span>
+                        <h4 class="text-xl font-bold my-2" style="color: #3E2723;">Step 3: Revit Creation</h4>
+                        <p class="text-sm" style="color: #6D4C41;">Prompt AI for the API code to create new `ViewSheet` elements, finding the Title Block by name.</p>
+                    </div>
+                    <span class="text-4xl font-light md:rotate-0 rotate-90 mx-auto" style="color: #4682B4;">→</span>
+                    <div class="flex-1 p-6 rounded-lg text-center shadow-lg bg-white">
+                        <span class="text-5xl">4️⃣</span>
+                        <h4 class="text-xl font-bold my-2" style="color: #3E2723;">Step 4: Assembly</h4>
+                        <p class="text-sm" style="color: #6D4C41;">Combine all snippets into your `script.py`, place it in the "Magic Folder," and test the final tool.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="gotchas" class="mb-16 space-y-8 scroll-mt-20">
+                <h2 class="text-3xl font-bold" style="color: #6D4C41;">Common "Gotchas" & Fixes</h2>
+                <p class="text-lg mb-6" style="color: #6D4C41;">AI makes common, predictable mistakes. This section covers the top failures you'll encounter and the exact prompts to fix them. Click each "Gotcha" to reveal the solution.</p>
+                <div class="space-y-4">
+                    <div class="accordion-item bg-white rounded-lg shadow-lg">
+                        <button class="accordion-header flex justify-between items-center w-full p-6 text-left">
+                            <span class="text-xl font-semibold" style="color: #3E2723;">Gotcha 1: Unit Conversion Errors</span>
+                            <span class="text-2xl font-semibold" style="color: #4682B4;">+</span>
+                        </button>
+                        <div class="accordion-content px-6 pb-6">
+                            <p class="mb-4" style="color: #6D4C41;"><strong>The Problem:</strong> You ask for a 5-foot offset, and the code creates an offset 5 units (e.g., 5mm) wide, or it fails. The AI forgets that Revit's API uses internal units (decimal feet).</p>
+                            <p class="p-4 rounded-lg" style="background-color: #F0F8FF; color: #3E2723;"><strong>The Fix (Prompt):</strong> "Use `UnitUtils.ConvertToInternalUnits` to handle the units correctly."</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item bg-white rounded-lg shadow-lg">
+                        <button class="accordion-header flex justify-between items-center w-full p-6 text-left">
+                            <span class="text-xl font-semibold" style="color: #3E2723;">Gotcha 2: Outdated API Methods</span>
+                            <span class="text-2xl font-semibold" style="color: #4682B4;">+</span>
+                        </button>
+                        <div class="accordion-content px-6 pb-6">
+                            <p class="mb-4" style="color: #6D4C41;"><strong>The Problem:</strong> The AI uses old, deprecated methods like `Parameter.Set()` which fail in modern Revit versions, as it was trained on older data.</p>
+                            <p class="p-4 rounded-lg" style="background-color: #F0F8FF; color: #3E2723;"><strong>The Fix (Prompt):</strong> "This is for Revit 2025. Please use the most current API methods."</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item bg-white rounded-lg shadow-lg">
+                        <button class="accordion-header flex justify-between items-center w-full p-6 text-left">
+                            <span class="text-xl font-semibold" style="color: #3E2723;">Gotcha 3: Inefficient Transactions</span>
+                            <span class="text-2xl font-semibold" style="color: #4682B4;">+</span>
+                        </button>
+                        <div class="accordion-content px-6 pb-6">
+                            <p class="mb-4" style="color: #6D4C41;"><strong>The Problem:</strong> You try to rename 1000 views, and it takes 5 minutes. The AI put the `Transaction.Start()` and `Transaction.Commit()` *inside* the `for` loop, creating 1000 individual undo states.</p>
+                            <p class="p-4 rounded-lg" style="background-color: #F0F8FF; color: #3E2723;"><strong>The Fix (Prompt):</strong> "This is slow. Please 'batch the transaction' by wrapping the entire loop in a single transaction for performance."</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="text-center mt-16 pt-8 border-t" style="border-color: #E0E0E0;">
+                <h3 class="text-2xl font-semibold mb-4" style="color: #3E2723;">Recommended Resources</h3>
+                <div class="flex justify-center space-x-6" style="color: #4682B4;">
+                    <a href="https://www.revitapidocs.com/" target="_blank" class="hover:underline">Revit API Docs</a>
+                    <a href="https://pyrevitlabs.notion.site/" target="_blank" class="hover:underline">pyRevit Developer Docs</a>
+                    <a href="https://primer.dynamobim.org/10_Custom-Nodes/10-1_Introduction.html" target="_blank" class="hover:underline">Dynamo Python Primer</a>
+                </div>
+            </footer>
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.sticky-nav a');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                        });
+                    }
+                });
+            }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = e.currentTarget.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            const accordionHeaders = document.querySelectorAll('.accordion-header');
+            accordionHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const content = header.nextElementSibling;
+                    const isOpen = content.style.display === 'block';
+                    
+                    document.querySelectorAll('.accordion-content').forEach(c => {
+                        c.style.display = 'none';
+                        c.previousElementSibling.querySelector('span:last-child').textContent = '+';
+                    });
+                    
+                    if (!isOpen) {
+                        content.style.display = 'block';
+                        header.querySelector('span:last-child').textContent = '−';
+                    }
+                });
+            });
+
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    const tabId = button.getAttribute('data-tab');
+                    tabContents.forEach(content => {
+                        content.classList.toggle('active', content.id === tabId);
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

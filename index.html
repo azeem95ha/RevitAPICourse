@@ -1,462 +1,579 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Course Plan: AI-Driven Revit Automation</title>
+    <title>AI-Driven Revit Automation | Complete Course</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chosen Palette: Warm & Welcoming -->
-    <!-- Application Structure Plan: A single-page, vertically scrolling SPA with a sticky side-navigation. This structure allows users to get a quick overview and then dive into specific modules (Module 1, 2, 3, Capstone, Gotchas) in any order. Interactive elements like tabs (Mod 2), an accordion (Gotchas), and HTML-based diagrams (Context Triangle, Debug Loop, Folder Structure) are used to make abstract concepts more tangible and digestible, which is more effective for a curriculum than a static document. -->
-    <!-- Visualization & Content Choices: 
-        - Learning Objectives (Goal: Inform) -> Interactive HTML/Tailwind cards -> Hover interaction -> More engaging than a list.
-        - Context Triangle (Goal: Organize) -> HTML/Tailwind diagram -> Static -> Visually reinforces the 3-part concept.
-        - Iterative Debug Loop (Goal: Organize/Process) -> HTML/Tailwind flowchart -> Static -> Clearly shows the feedback loop.
-        - Dynamo vs. Python (Goal: Compare) -> Side-by-side HTML/CSS pseudo-diagram and code block -> Static -> Visually contrasts complexity with simplicity.
-        - Module 2 Examples (Goal: Inform) -> JS-powered Tabbed Interface -> Click interaction -> Organizes 3 examples compactly.
-        - pyRevit Folder Structure (Goal: Organize/Hierarchy) -> Styled nested HTML list -> Static -> Clearly visualizes the required hierarchy.
-        - Capstone Project (Goal: Organize/Process) -> Horizontal HTML/Tailwind flowchart -> Static -> Shows the 4-step development process.
-        - "Gotchas" (Goal: Inform) -> JS-powered Accordion -> Click interaction -> Hides fixes until needed, making problems scannable.
-        - No Chart.js/Plotly.js used, as the source report is a curriculum and contains no quantitative data to plot. Visualizations are structural/process-based.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #FDFBF6;
-            color: #3E2723;
+        body { font-family: 'Inter', sans-serif; }
+        code, pre { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Custom Scrollbar for code blocks */
+        .code-scroll::-webkit-scrollbar { height: 8px; }
+        .code-scroll::-webkit-scrollbar-track { background: #1e293b; }
+        .code-scroll::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        
+        /* Fade In Animation */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Tree Line styling for Module 3 */
+        .tree-line { position: relative; }
+        .tree-line::before {
+            content: ''; position: absolute; left: -14px; top: 0; bottom: 0; width: 2px; background-color: #cbd5e1;
         }
-        .sticky-nav a {
-            transition: all 0.2s ease-in-out;
-        }
-        .sticky-nav a.active {
-            color: #4682B4;
-            border-left-color: #4682B4;
-            transform: translateX(4px);
-            font-weight: 600;
-        }
-        .pseudo-dynamo-node {
-            background-color: #fafafa;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 8px 12px;
-            font-family: monospace;
-            font-size: 0.8rem;
-            text-align: center;
-            margin: 4px;
-            position: relative;
-        }
-        .pseudo-dynamo-connector {
-            width: 50%;
-            height: 2px;
-            background-color: #bbb;
-            margin-left: 50%;
-        }
-        .accordion-content {
-            display: none;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .tab-btn.active {
-            background-color: #6D4C41;
-            color: #FDFBF6;
-        }
-        .logo {
-            size: auto;
-            margin-bottom: 24px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        .tree-item::before {
+            content: ''; position: absolute; left: -14px; top: 14px; width: 12px; height: 2px; background-color: #cbd5e1;
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="antialiased">
+<body class="bg-slate-50 text-slate-800 h-screen flex overflow-hidden">
 
-    <div class="relative flex">
-                
-        <nav class="sticky top-0 h-screen w-64 hidden md:block p-8 border-r border-gray-200" style="border-color: #E0E0E0;">
-            <img src="schema logo.png" class="logo">
-            <h2 class="font-bold text-lg mb-4" style="color: #6D4C41;">Course Sections</h2>
-            
-            <div class="sticky-nav flex flex-col space-y-2">
-                <a href="#overview" class="block py-1 text-sm border-l-2 border-transparent" style="color: #6D4C41; border-color: transparent;">Overview</a>
-                <a href="#module1" class="block py-1 text-sm border-l-2 border-transparent" style="color: #6D4C41; border-color: transparent;">Module 1: AI Foundation</a>
-                <a href="#module2" class="block py-1 text-sm border-l-2 border-transparent" style="color: #6D4C41; border-color: transparent;">Module 2: Dynamo</a>
-                <a href="#module3" class="block py-1 text-sm border-l-2 border-transparent" style="color: #6D4C41; border-color: transparent;">Module 3: pyRevit</a>
-                <a href="#capstone" class="block py-1 text-sm border-l-2 border-transparent" style="color: #6D4C41; border-color: transparent;">Capstone Project</a>
-                <a href="#gotchas" class="block py-1 text-sm border-l-2 border-transparent" style="color: #6D4C41; border-color: transparent;">Common "Gotchas"</a>
+    <!-- Mobile Header -->
+    <div class="md:hidden fixed w-full bg-slate-900 text-white z-50 flex items-center justify-between p-4 shadow-md">
+        <span class="font-bold text-lg">Revit Auto<span class="text-blue-400">AI</span></span>
+        <button onclick="toggleSidebar()" class="text-slate-300 hover:text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-72 bg-slate-900 text-white transform -translate-x-full md:translate-x-0 transition-transform duration-300 flex flex-col border-r border-slate-800">
+        <div class="p-6 border-b border-slate-800 flex items-center space-x-3">
+            <div class="bg-blue-600 p-2 rounded-lg">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
             </div>
+            <div>
+                <h1 class="font-bold text-lg tracking-tight">Revit Auto<span class="text-blue-400">AI</span></h1>
+                <p class="text-xs text-slate-400">Master Course v2.0</p>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto p-4 space-y-1">
+            <button onclick="navigate('home')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors hover:bg-slate-800 text-blue-400 bg-slate-800" id="btn-home">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="font-medium">Overview</span>
+            </button>
+
+            <div class="pt-6 pb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Curriculum</div>
+
+            <button onclick="navigate('module1')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-slate-400 hover:bg-slate-800 hover:text-white" id="btn-module1">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                <span>Module 1: AI Foundation</span>
+            </button>
+            <button onclick="navigate('module2')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-slate-400 hover:bg-slate-800 hover:text-white" id="btn-module2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                <span>Module 2: Dynamo</span>
+            </button>
+            <button onclick="navigate('module3')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-slate-400 hover:bg-slate-800 hover:text-white" id="btn-module3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                <span>Module 3: pyRevit</span>
+            </button>
+            <button onclick="navigate('capstone')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-slate-400 hover:bg-slate-800 hover:text-white" id="btn-capstone">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                <span>Capstone Project</span>
+            </button>
         </nav>
 
-        <main class="flex-1 max-w-5xl mx-auto p-6 md:p-12">
-            
-            <header class="mb-12">
-                <h1 class="text-4xl md:text-5xl font-bold mb-4" style="color: #3E2723;">AI-Driven Revit Automation</h1>
-                <p class="text-xl" style="color: #6D4C41;">This course empowers BIM professionals to automate Revit without spending years learning to code. By leveraging Large Language Models (LLMs), you will learn to generate, debug, and deploy Python scripts for Dynamo and pyRevit.</p>
-                
+        <div class="p-4 border-t border-slate-800">
+            <div class="bg-slate-800 rounded p-4">
+                <p class="text-xs text-slate-400 mb-2">Progress</p>
+                <div class="w-full bg-slate-700 rounded-full h-2">
+                    <div id="progress-bar" class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 md:ml-72 h-full overflow-y-auto bg-slate-50 pt-16 md:pt-0">
+        
+        <!-- View: HOME -->
+        <section id="home" class="view-section p-8 md:p-12 max-w-5xl mx-auto space-y-12">
+            <header class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-10 rounded-2xl shadow-xl">
+                <div class="inline-block bg-blue-600 text-xs font-bold px-2 py-1 rounded mb-4 uppercase tracking-wide">Course Overview</div>
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">AI-Driven Revit Automation</h1>
+                <p class="text-xl text-blue-100 max-w-2xl leading-relaxed">
+                    Stop manually clicking. Start managing logic. This course empowers BIM professionals to leverage Large Language Models (LLMs) to generate, debug, and deploy Python automation tools without spending years learning syntax.
+                </p>
+                <button onclick="navigate('module1')" class="mt-8 bg-white text-slate-900 px-8 py-3 rounded-lg font-bold hover:bg-blue-50 transition-colors inline-flex items-center">
+                    Start Learning 
+                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </button>
             </header>
 
-            <section id="overview" class="mb-16 space-y-8 scroll-mt-20">
-                <h2 class="text-3xl font-bold" style="color: #6D4C41;">Course Overview</h2>
+            <div>
+                <h2 class="text-2xl font-bold text-slate-800 mb-6">Your Learning Path</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Cards -->
+                    <div onclick="navigate('module1')" class="group cursor-pointer bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-lg hover:border-blue-500 transition-all">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">1</div>
+                            <svg class="w-5 h-5 text-slate-300 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2 text-slate-800">The AI Foundation</h3>
+                        <p class="text-slate-600 text-sm">Master the "Context Triangle" and the Iterative Debugging Loop.</p>
+                    </div>
+                    
+                    <div onclick="navigate('module2')" class="group cursor-pointer bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-lg hover:border-blue-500 transition-all">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600">2</div>
+                            <svg class="w-5 h-5 text-slate-300 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2 text-slate-800">Dynamo Evolution</h3>
+                        <p class="text-slate-600 text-sm">Replace "Node Spaghetti" with clean, AI-generated Python scripts.</p>
+                    </div>
+
+                    <div onclick="navigate('module3')" class="group cursor-pointer bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-lg hover:border-blue-500 transition-all">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600">3</div>
+                            <svg class="w-5 h-5 text-slate-300 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2 text-slate-800">Professional Add-ins</h3>
+                        <p class="text-slate-600 text-sm">Deploy your scripts to the Revit Ribbon using pyRevit.</p>
+                    </div>
+
+                    <div onclick="navigate('capstone')" class="group cursor-pointer bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-lg hover:border-blue-500 transition-all">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600">★</div>
+                            <svg class="w-5 h-5 text-slate-300 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2 text-slate-800">Capstone Project</h3>
+                        <p class="text-slate-600 text-sm">Build a complete "BIM Manager Suite" toolbar from scratch.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- View: MODULE 1 -->
+        <section id="module1" class="view-section hidden p-8 md:p-12 max-w-4xl mx-auto space-y-12 fade-in">
+            <div class="border-b border-slate-200 pb-6">
+                <span class="text-blue-600 font-bold tracking-wide uppercase text-sm">Module 1</span>
+                <h2 class="text-4xl font-bold text-slate-900 mt-2">The AI Co-Pilot Foundation</h2>
+            </div>
+
+            <!-- Concept 1 -->
+            <div class="prose prose-slate max-w-none">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">1. The Paradigm Shift</h3>
+                <p class="text-lg text-slate-600 leading-relaxed">
+                    Historically, learning the Revit API required memorizing thousands of classes. Today, your goal is not to be a syntax library, but a <strong class="text-slate-900">Technical Product Manager</strong>. Your AI is your Junior Developer: it types fast but lacks context.
+                </p>
+            </div>
+
+            <!-- Context Triangle Visualization -->
+            <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 p-6 border-b border-slate-200 text-center">
+                    <h3 class="text-xl font-bold text-slate-800">The Context Triangle Framework</h3>
+                    <p class="text-slate-500 text-sm mt-1">Every prompt must contain these three vertices to succeed.</p>
+                </div>
+                <div class="p-8 grid md:grid-cols-3 gap-8">
+                    <!-- Vertex 1 -->
+                    <div class="text-center relative">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">👤</div>
+                        <h4 class="font-bold text-slate-900">ROLE</h4>
+                        <p class="text-sm text-slate-600 mt-2 bg-slate-50 p-3 rounded border border-slate-100">"You are a Senior Revit API Developer."</p>
+                    </div>
+                    <!-- Vertex 2 -->
+                    <div class="text-center relative">
+                        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">🎯</div>
+                        <h4 class="font-bold text-slate-900">TASK</h4>
+                        <p class="text-sm text-slate-600 mt-2 bg-slate-50 p-3 rounded border border-slate-100">"Write a script to delete all unplaced rooms."</p>
+                    </div>
+                    <!-- Vertex 3 -->
+                    <div class="text-center relative">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">📋</div>
+                        <h4 class="font-bold text-slate-900">CONSTRAINT</h4>
+                        <p class="text-sm text-slate-600 mt-2 bg-slate-50 p-3 rounded border border-slate-100">"Use Revit 2024 API, Python 3, and catch errors."</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Debugging Loop -->
+            <div>
+                <h3 class="text-2xl font-bold text-slate-800 mb-6">2. The Iterative Debugging Loop</h3>
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 bg-slate-100 p-8 rounded-xl border border-slate-200">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex-1 text-center">
+                        <span class="font-bold text-blue-600 block mb-2">Step 1</span>
+                        Generate Code
+                    </div>
+                    <svg class="w-6 h-6 text-slate-400 transform rotate-90 md:rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    <div class="bg-red-50 p-6 rounded-lg shadow-sm border border-red-100 flex-1 text-center">
+                        <span class="font-bold text-red-600 block mb-2">Step 2</span>
+                        Run & Fail (Get Error)
+                    </div>
+                    <svg class="w-6 h-6 text-slate-400 transform rotate-90 md:rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    <div class="bg-green-50 p-6 rounded-lg shadow-sm border border-green-100 flex-1 text-center">
+                        <span class="font-bold text-green-600 block mb-2">Step 3</span>
+                        "Feed" Error to AI
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-r-lg">
+                <h4 class="font-bold text-yellow-800 mb-2">⚠️ The "Hallucination" Trap</h4>
+                <p class="text-sm text-yellow-700 mb-2">
+                    AI often invents methods that sound logical but don't exist.
+                </p>
+                <code class="block bg-yellow-100 p-2 rounded text-xs font-mono text-yellow-900 mt-2">
+                    Error: 'Wall' object has no attribute 'GetVolume'
+                </code>
+                <p class="text-sm text-yellow-700 mt-2">
+                    <strong>Fix:</strong> Paste that exact error back to the AI. It will correct itself to use <code class="bg-white px-1 rounded">get_Parameter(BuiltInParameter.HOST_VOLUME_COMPUTED)</code>.
+                </p>
+            </div>
+        </section>
+
+        <!-- View: MODULE 2 -->
+        <section id="module2" class="view-section hidden p-8 md:p-12 max-w-4xl mx-auto space-y-12 fade-in">
+            <div class="border-b border-slate-200 pb-6">
+                <span class="text-purple-600 font-bold tracking-wide uppercase text-sm">Module 2</span>
+                <h2 class="text-4xl font-bold text-slate-900 mt-2">Dynamo Evolution</h2>
+            </div>
+
+            <!-- Intro -->
+            <div class="prose prose-slate max-w-none">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">The "Spaghetti" Problem</h3>
+                <p class="text-lg text-slate-600">
+                    Visual programming is intuitive for simple logic but becomes unmanageable for complex tasks. A single AI-generated Python node can replace dozens of standard nodes, making your scripts faster and easier to debug.
+                </p>
+            </div>
+
+            <!-- Interactive Comparison -->
+            <div class="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                <div class="flex border-b border-slate-200">
+                    <button onclick="switchTab('old')" id="tab-old" class="flex-1 py-4 text-center font-bold text-slate-500 hover:bg-slate-50 border-b-2 border-transparent">The Old Way (Nodes)</button>
+                    <button onclick="switchTab('new')" id="tab-new" class="flex-1 py-4 text-center font-bold text-purple-600 border-b-2 border-purple-600 bg-purple-50">The AI Way (Python)</button>
+                </div>
                 
-                <div>
-                    <h3 class="text-2xl font-semibold mb-4" style="color: #3E2723;">Learning Objectives</h3>
-                    <p class="mb-6 text-lg" style="color: #6D4C41;">This course is designed to take you from a Revit user to a proficient automator. You will not just learn *what* to do, but *how* to think like a developer, using AI as your co-pilot to build powerful tools.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4" style="border-color: #4682B4;">
-                            <h4 class="text-xl font-bold mb-2" style="color: #3E2723;">Prompt Effectively</h4>
-                            <p style="color: #6D4C41;">Learn to ask AI for functional Revit API code using the "Context Triangle" framework.</p>
+                <div class="p-8">
+                    <!-- Tab Content: OLD -->
+                    <div id="content-old" class="hidden text-center py-8">
+                        <div class="flex items-center justify-center space-x-4 mb-6 opacity-50">
+                            <div class="w-24 h-16 bg-slate-200 rounded border border-slate-300 flex items-center justify-center text-xs">Selection</div>
+                            <div class="h-1 w-8 bg-slate-300"></div>
+                            <div class="w-24 h-16 bg-slate-200 rounded border border-slate-300 flex items-center justify-center text-xs">String.Concat</div>
+                            <div class="h-1 w-8 bg-slate-300"></div>
+                            <div class="w-24 h-16 bg-slate-200 rounded border border-slate-300 flex items-center justify-center text-xs">Set Param</div>
                         </div>
-                        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4" style="border-color: #4682B4;">
-                            <h4 class="text-xl font-bold mb-2" style="color: #3E2723;">Debug & Fix</h4>
-                            <p style="color: #6D4C41;">Master the "Iterative Debugging" loop to identify and fix common AI hallucinations and errors.</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4" style="border-color: #4682B4;">
-                            <h4 class="text-xl font-bold mb-2" style="color: #3E2723;">Replace "Node Spaghetti"</h4>
-                            <p style="color: #6D4C41;">Move beyond complex Dynamo graphs by replacing them with clean, efficient Python nodes.</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4" style="border-color: #4682B4;">
-                            <h4 class="text-xl font-bold mb-2" style="color: #3E2723;">Deploy Custom Tools</h4>
-                            <p style="color: #6D4C41;">Build and deploy professional add-ins to your company's Revit ribbon using pyRevit.</p>
-                        </div>
+                        <h4 class="font-bold text-red-600 mb-2">Pain Points</h4>
+                        <ul class="text-sm text-slate-600 space-y-2">
+                            <li>Fragile wires break easily.</li>
+                            <li>Hard to handle nulls or nested lists.</li>
+                            <li>"Lacing" settings are hidden and confusing.</li>
+                        </ul>
                     </div>
-                </div>
 
-                <div>
-                    <h3 class="text-2xl font-semibold mb-4" style="color: #3E2723;">Required Software</h3>
-                    <p class="mb-6 text-lg" style="color: #6D4C41;">To follow along with the course, you will need access to the following tools. This stack is the modern standard for Revit automation.</p>
-                    <ul class="list-disc list-inside space-y-2 text-lg" style="color: #6D4C41;">
-                        <li>Revit 2024 or later (for Python 3 support)</li>
-                        <li>Dynamo (Pre-installed with Revit)</li>
-                        <li>pyRevit (Latest Version)</li>
-                        <li>An account for an advanced LLM (ChatGPT Plus, Claude Pro, etc.)</li>
-                        <li>VS Code (Recommended for editing script files)</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="module1" class="mb-16 space-y-8 scroll-mt-20">
-                <h2 class="text-3xl font-bold" style="color: #6D4C41;">Module 1: The AI Co-Pilot Foundation</h2>
-                <p class="text-lg mb-6" style="color: #6D4C41;">This module is the most critical. You will learn how to communicate with LLMs to get predictable, high-quality code. This section focuses on avoiding "garbage in, garbage out" by understanding how to ask questions correctly.</p>
-
-                <div>
-                    <h3 class="text-2xl font-semibold mb-4" style="color: #3E2723;">The Context Triangle</h3>
-                    <p class="mb-6 text-lg" style="color: #6D4C41;">Your most important tool is the prompt. A good prompt provides three pieces of context to the AI to ensure a relevant and accurate response. We call this the "Context Triangle."</p>
-                    <div class="flex flex-col md:flex-row gap-6">
-                        <div class="flex-1 bg-white p-6 rounded-lg shadow-lg text-center">
-                            <span class="text-5xl">👤</span>
-                            <h4 class="text-xl font-bold my-2" style="color: #3E2723;">ROLE</h4>
-                            <p class="text-sm" style="color: #6D4C41;">"You are a Senior Revit API Developer."</p>
-                        </div>
-                        <div class="flex-1 bg-white p-6 rounded-lg shadow-lg text-center">
-                            <span class="text-5xl">🎯</span>
-                            <h4 class="text-xl font-bold my-2" style="color: #3E2723;">TASK</h4>
-                            <p class="text-sm" style="color: #6D4C41;">"Write a script to delete all unplaced rooms."</p>
-                        </div>
-                        <div class="flex-1 bg-white p-6 rounded-lg shadow-lg text-center">
-                            <span class="text-5xl">📋</span>
-                            <h4 class="text-xl font-bold my-2" style="color: #3E2723;">CONSTRAINT</h4>
-                            <p class="text-sm" style="color: #6D4C41;">"Use the Revit 2024 API, Python 3, and include error handling."</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 class="text-2xl font-semibold mb-4" style="color: #3E2723;">The "Iterative Debugging" Loop</h3>
-                    <p class="mb-6 text-lg" style="color: #6D4C41;">AI code will fail. The key is not to get frustrated, but to use the error as part of the conversation. This workflow, which we call "Feeding the Error," is the fastest way to a working script.</p>
-                    <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 bg-white p-6 rounded-lg shadow-lg">
-                        <div class="p-4 rounded-lg text-center border-2" style="border-color: #4682B4; background-color: #F0F8FF;">
-                            <h4 class="font-semibold" style="color: #3E2723;">1. Generate Code</h4>
-                            <p class="text-sm" style="color: #6D4C41;">Give the AI a prompt using the Context Triangle.</p>
-                        </div>
-                        <span class="text-4xl font-light md:rotate-0 rotate-90" style="color: #4682B4;">→</span>
-                        <div class="p-4 rounded-lg text-center border-2" style="border-color: #E6B800; background-color: #FFFBEB;">
-                            <h4 class="font-semibold" style="color: #3E2723;">2. Get Error</h4>
-                            <p class="text-sm" style="color: #6D4C41;">Run the code in Revit/Dynamo and get an error message.</p>
-                        </div>
-                        <span class="text-4xl font-light md:rotate-0 rotate-90" style="color: #4682B4;">→</span>
-                        <div class="p-4 rounded-lg text-center border-2" style="border-color: #D32F2F; background-color: #FFF1F0;">
-                            <h4 class="font-semibold" style="color: #3E2723;">3. "Feed" the Error</h4>
-                            <p class="text-sm" style="color: #6D4C41;">Copy/paste the *exact* error back to the AI.</p>
-                        </div>
-                        <span class="text-4xl font-light md:rotate-0 rotate-90" style="color: #4682B4;">↺</span>
-                    </div>
-                </div>
-            </section>
-
-            <section id="module2" class="mb-16 space-y-8 scroll-mt-20">
-                <h2 class="text-3xl font-bold" style="color: #6D4C41;">Module 2: AI-Powered Dynamo Scripting</h2>
-                <p class="text-lg mb-6" style="color: #6D4C41;">In this module, you'll apply your new AI skills to Dynamo. The goal is to stop relying on finding the right nodes and instead use AI to write powerful, compact Python scripts that do the work for you.</p>
-
-                <div>
-                    <h3 class="text-2xl font-semibold mb-4" style="color: #3E2723;">Replace "Node Spaghetti"</h3>
-                    <p class="mb-6 text-lg" style="color: #6D4C41;">Complex Dynamo graphs are hard to read, debug, and share. A single, well-prompted Python node can replace dozens of regular nodes, making your scripts clean and efficient.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="bg-white p-6 rounded-lg shadow-lg">
-                            <h4 class="text-xl font-bold text-center mb-4" style="color: #D32F2F;">BEFORE: "Node Spaghetti"</h4>
-                            <div class="flex flex-col items-center p-4 rounded-lg bg-gray-50 h-64 overflow-hidden relative">
-                                <div class="pseudo-dynamo-node w-3/4">Element.GetParameterValueByName</div>
-                                <div class="pseudo-dynamo-connector" style="margin-left: 25%; width: 25%;"></div>
-                                <div class="pseudo-dynamo-node w-3/4">String.Concat</div>
-                                <div class="pseudo-dynamo-connector"></div>
-                                <div class="pseudo-dynamo-node w-3/4">Element.SetParameterByName</div>
-                                <div class="pseudo-dynamo-connector" style="margin-left: 10%; width: 80%;"></div>
-                                <div class="pseudo-dynamo-node w-3/4">List.Map</div>
-                            </div>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg shadow-lg">
-                            <h4 class="text-xl font-bold text-center mb-4" style="color: #2E7D32;">AFTER: AI-Generated Python</h4>
-                            <div class="p-4 rounded-lg bg-gray-900 h-64 overflow-auto">
-<pre class="text-sm text-gray-200">
-import clr
+                    <!-- Tab Content: NEW -->
+                    <div id="content-new" class="block">
+                        <h4 class="font-bold text-slate-800 mb-4">Task: Bulk Rename Views</h4>
+                        <div class="bg-slate-900 rounded-lg p-4 overflow-x-auto code-scroll">
+<pre class="text-sm text-blue-100"><code>import clr
 clr.AddReference('RevitServices')
 from RevitServices.Persistence import DocumentManager
-clr.AddReference('RevitAPI')
-from Autodesk.Revit.DB import Transaction
+from RevitServices.Transactions import TransactionManager
 
 doc = DocumentManager.Instance.CurrentDBDocument
-views = UnwrapElement(IN[0])
-prefix = "Draft-"
+# Unwrap inputs from Dynamo
+views = UnwrapElement(IN[0]) 
 
-t = Transaction(doc, "Add View Prefix")
-t.Start()
+TransactionManager.Instance.EnsureInTransaction(doc)
+
 for view in views:
     try:
-        view.Name = prefix + view.Name
+        # Clean, readable logic
+        view.Name = "Draft-" + view.Name
     except:
-        pass
-t.Commit()
+        pass # Skip duplicates
 
-OUT = views
-</pre>
-                            </div>
+TransactionManager.Instance.TransactionTaskDone()
+OUT = views</code></pre>
                         </div>
                     </div>
                 </div>
+            </div>
 
+            <!-- Boilerplate Explanation -->
+            <div class="grid md:grid-cols-2 gap-8">
                 <div>
-                    <h3 class="text-2xl font-semibold mb-4" style="color: #3E2723;">Text-to-Script Workflow</h3>
-                    <p class="mb-6 text-lg" style="color: #6D4C41;">We will practice our new workflow with several hands-on labs. You will be given a problem and will use an LLM to generate the Python script for a Dynamo node.</p>
-                    <div class="bg-white rounded-lg shadow-lg">
-                        <div class="flex border-b" style="border-color: #E0E0E0;">
-                            <button class="tab-btn flex-1 p-4 font-semibold active" data-tab="tab1" style="color: #6D4C41;">Exercise A: Bulk Renamer</button>
-                            <button class="tab-btn flex-1 p-4 font-semibold" data-tab="tab2" style="color: #6D4C41;">Exercise B: Geometry Creation</button>
-                            <button class="tab-btn flex-1 p-4 font-semibold" data-tab="tab3" style="color: #6D4C41;">Exercise C: Data Mining</button>
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">Understanding Boilerplate</h3>
+                    <p class="text-slate-600 text-sm mb-4">AI will generate these imports automatically. You don't need to memorize them, but you must recognize them so you don't delete them.</p>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start">
+                            <span class="bg-slate-200 text-slate-600 font-mono px-2 py-0.5 rounded text-xs mr-2 mt-0.5">clr.AddReference</span>
+                            <span class="text-slate-600">Loads the internal Revit API libraries.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-slate-200 text-slate-600 font-mono px-2 py-0.5 rounded text-xs mr-2 mt-0.5">UnwrapElement(IN[0])</span>
+                            <span class="text-slate-600">Converts Dynamo's "safe" elements into raw Revit elements we can modify.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-slate-200 text-slate-600 font-mono px-2 py-0.5 rounded text-xs mr-2 mt-0.5">TransactionManager</span>
+                            <span class="text-slate-600">Dynamo's specific way of handling database changes (different from pyRevit).</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-slate-100 p-6 rounded-lg border border-slate-200">
+                    <h4 class="font-bold text-slate-800 mb-4">Lab B: Geometry Trap</h4>
+                    <p class="text-sm text-slate-600 mb-4">AI often confuses Dynamo Points with Revit Points.</p>
+                    <div class="space-y-4">
+                        <div class="bg-red-50 p-3 rounded border border-red-100">
+                            <span class="text-xs font-bold text-red-600 block uppercase">Wrong (Dynamo Syntax)</span>
+                            <code class="text-xs font-mono text-red-800">Point.ByCoordinates(0,0,0)</code>
                         </div>
-                        <div class="p-6">
-                            <div id="tab1" class="tab-content active">
-                                <h4 class="text-xl font-bold mb-2">Prompt: The Bulk Renamer</h4>
-                                <p class="text-lg mb-4" style="color: #ffffff;">"Write a Python script for Dynamo. Input 0 is a list of Views. The script should add the prefix 'Draft-' to the View Name."</p>
-                                <strong style="color: #3E2723;">Key Lessons:</strong>
-                                <ul class="list-disc list-inside mt-2" style="color: #6D4C41;">
-                                    <li>Handling lists of elements (`IN[0]`)</li>
-                                    <li>Using Transactions to modify the model</li>
-                                    <li>Setting an element's parameter (Name)</li>
-                                </ul>
-                            </div>
-                            <div id="tab2" class="tab-content">
-                                <h4 class="text-xl font-bold mb-2">Prompt: Geometry Creation</h4>
-                                <p class="text-lg mb-4" style="color: #ffffff;">"Create a list of model lines forming a grid pattern based on X and Y inputs."</p>
-                                <strong style="color: #3E2723;">Key Lessons:</strong>
-                                <ul class="list-disc list-inside mt-2" style="color: #6D4C41;">
-                                    <li>Importing Revit API geometry classes</li>
-                                    <li>Using `for` loops to create multiple objects</li>
-                                    <li>Needing a Transaction to create new elements</li>
-                                </ul>
-                            </div>
-                            <div id="tab3" class="tab-content">
-                                <h4 class="text-xl font-bold mb-2">Prompt: Data Mining</h4>
-                                <p class="text-lg mb-4" style="color: #ffffff;">"Select all Walls in the active view, get their 'Volume' parameter, and sum the total volume."</p>
-                                <strong style="color: #3E2723;">Key Lessons:</strong>
-                                <ul class="list-disc list-inside mt-2" style="color: #6D4C41;">
-                                    <li>Using `FilteredElementCollector` to find elements</li>
-                                    <li>Accessing built-in parameters (`BuiltInParameter.HOST_VOLUME_COMPUTED`)</li>
-                                    <li>Aggregating data and outputting to `OUT`</li>
-                                </ul>
-                            </div>
+                        <div class="bg-green-50 p-3 rounded border border-green-100">
+                            <span class="text-xs font-bold text-green-600 block uppercase">Right (Revit API Syntax)</span>
+                            <code class="text-xs font-mono text-green-800">XYZ(0,0,0)</code>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <section id="module3" class="mb-16 space-y-8 scroll-mt-20">
-                <h2 class="text-3xl font-bold" style="color: #6D4C41;">Module 3: Building Professional Add-ins with pyRevit</h2>
-                <p class="text-lg mb-6" style="color: #6D4C41;">This module takes you beyond personal scripts and into the world of professional tool deployment. You'll learn to use pyRevit to create custom toolbars and buttons that you can share with your entire team.</p>
+        <!-- View: MODULE 3 -->
+        <section id="module3" class="view-section hidden p-8 md:p-12 max-w-4xl mx-auto space-y-12 fade-in">
+            <div class="border-b border-slate-200 pb-6">
+                <span class="text-emerald-600 font-bold tracking-wide uppercase text-sm">Module 3</span>
+                <h2 class="text-4xl font-bold text-slate-900 mt-2">Professional Add-ins (pyRevit)</h2>
+            </div>
 
-                <div>
-                    <h3 class="text-2xl font-semibold mb-4" style="color: #3E2723;">The "Magic" Folder Structure</h3>
-                    <p class="mb-6 text-lg" style="color: #6D4C41;">pyRevit's greatest strength is its simplicity. You don't need to compile code. You simply create a specific folder structure, and pyRevit reads it to build your UI automatically. This diagram shows the required hierarchy.</p>
-                    <div class="bg-white p-6 rounded-lg shadow-lg font-mono text-sm" style="color: #3E2723;">
-                        <div class="border-l-2 pl-4" style="border-color: #6D4C41;">
-                            <strong>MyCompany.extension/</strong>
-                            <div class="border-l-2 pl-4 mt-2" style="border-color: #6D4C41;">
-                                <strong>MyTools.tab/</strong>
-                                <div class="border-l-2 pl-4 mt-2" style="border-color: #6D4C41;">
-                                    <strong>Modeling.panel/</strong>
-                                    <div class="border-l-2 pl-4 mt-2" style="border-color: #4682B4;">
-                                        <strong>QuickWall.pushbutton/</strong>
-                                        <div class="pl-4 mt-2" style="color: #6D4C41;">
-                                            <p>├── script.py (Your Python code)</p>
-                                            <p>├── icon.png (Your button icon)</p>
-                                            <p>└── bundle.yaml (Button metadata)</p>
-                                        </div>
+            <!-- Intro -->
+            <div class="prose prose-slate max-w-none">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">Leaving the Sandbox</h3>
+                <p class="text-lg text-slate-600">
+                    Dynamo is for you; pyRevit is for your team. pyRevit allows you to run Python scripts as buttons on the Revit Ribbon. The best part? There is no compiling. The UI is built entirely from folders.
+                </p>
+            </div>
+
+            <!-- Folder Structure Tree -->
+            <div class="bg-white p-8 rounded-xl shadow-lg border border-slate-200">
+                <h3 class="font-bold text-slate-800 mb-6 border-b border-slate-100 pb-2">The "Magic Folder" Structure</h3>
+                <div class="pl-4 font-mono text-sm text-slate-700 space-y-3">
+                    <!-- Extension -->
+                    <div class="flex items-center">
+                        <svg class="w-4 h-4 text-amber-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
+                        <span class="font-bold">MyCompany.extension</span>
+                        <span class="ml-2 text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-500">Root</span>
+                    </div>
+                    
+                    <!-- Tab -->
+                    <div class="tree-line ml-6 pl-6 pt-1">
+                        <div class="flex items-center tree-item">
+                            <svg class="w-4 h-4 text-amber-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
+                            <span class="font-bold">MyTools.tab</span>
+                            <span class="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Revit Tab</span>
+                        </div>
+                        
+                        <!-- Panel -->
+                        <div class="tree-line ml-6 pl-6 pt-4">
+                            <div class="flex items-center tree-item">
+                                <svg class="w-4 h-4 text-amber-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
+                                <span class="font-bold">Modeling.panel</span>
+                                <span class="ml-2 text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-500">Panel</span>
+                            </div>
+                            
+                            <!-- Pushbutton -->
+                            <div class="tree-line ml-6 pl-6 pt-4">
+                                <div class="flex items-center tree-item">
+                                    <svg class="w-4 h-4 text-amber-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
+                                    <span class="font-bold">SmartWalls.pushbutton</span>
+                                    <span class="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">Button</span>
+                                </div>
+                                
+                                <!-- Files -->
+                                <div class="tree-line ml-6 pl-6 pt-4 space-y-2">
+                                    <div class="flex items-center tree-item">
+                                        <svg class="w-4 h-4 text-slate-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        <span>script.py</span>
+                                        <span class="ml-2 text-xs text-slate-400">// The logic</span>
+                                    </div>
+                                    <div class="flex items-center relative">
+                                        <div class="absolute -left-[22px] top-1/2 w-3 h-[2px] bg-slate-300"></div>
+                                        <svg class="w-4 h-4 text-slate-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                        <span>icon.png</span>
+                                        <span class="ml-2 text-xs text-slate-400">// 96x96 px</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <section id="capstone" class="mb-16 space-y-8 scroll-mt-20">
-                <h2 class="text-3xl font-bold" style="color: #6D4C41;">Capstone Project: "The Excel-to-Sheet Generator"</h2>
-                <p class="text-lg mb-6" style="color: #6D4C41;">The capstone project combines everything you've learned. You will build a full pyRevit button that reads an Excel file and automatically creates new sheets in your Revit project, saving hours of manual setup.</p>
-                <p class="text-lg mb-6" style="color: #6D4C41;">This diagram shows the development workflow. You will use the AI to generate the code for each step, then assemble them into the final `script.py` file for your pyRevit button.</p>
+            <!-- Migration Guide -->
+            <div>
+                <h3 class="font-bold text-lg text-slate-800 mb-4">Migration: Dynamo vs pyRevit</h3>
+                <div class="bg-slate-900 rounded-lg p-6 overflow-x-auto code-scroll">
+<pre class="text-sm text-blue-100"><code><span class="text-slate-500"># --- DYNAMO (OLD) ---</span>
+<span class="text-red-300">views = UnwrapElement(IN[0])</span>
 
-                <div class="flex flex-col md:flex-row items-stretch justify-between space-y-4 md:space-y-0 md:space-x-4">
-                    <div class="flex-1 p-6 rounded-lg text-center shadow-lg bg-white">
-                        <span class="text-5xl">1️⃣</span>
-                        <h4 class="text-xl font-bold my-2" style="color: #3E2723;">Step 1: The UI</h4>
-                        <p class="text-sm" style="color: #6D4C41;">Prompt AI to write code for a file picker using `pyRevit.forms`.</p>
-                    </div>
-                    <span class="text-4xl font-light md:rotate-0 rotate-90 mx-auto" style="color: #4682B4;">→</span>
-                    <div class="flex-1 p-6 rounded-lg text-center shadow-lg bg-white">
-                        <span class="text-5xl">2️⃣</span>
-                        <h4 class="text-xl font-bold my-2" style="color: #3E2723;">Step 2: Data Parsing</h4>
-                        <p class="text-sm" style="color: #6D4C41;">Prompt AI to use `pandas` to read sheet numbers and names from the selected Excel file.</p>
-                    </div>
-                    <span class="text-4xl font-light md:rotate-0 rotate-90 mx-auto" style="color: #4682B4;">→</span>
-                    <div class="flex-1 p-6 rounded-lg text-center shadow-lg bg-white">
-                        <span class="text-5xl">3️⃣</span>
-                        <h4 class="text-xl font-bold my-2" style="color: #3E2723;">Step 3: Revit Creation</h4>
-                        <p class="text-sm" style="color: #6D4C41;">Prompt AI for the API code to create new `ViewSheet` elements, finding the Title Block by name.</p>
-                    </div>
-                    <span class="text-4xl font-light md:rotate-0 rotate-90 mx-auto" style="color: #4682B4;">→</span>
-                    <div class="flex-1 p-6 rounded-lg text-center shadow-lg bg-white">
-                        <span class="text-5xl">4️⃣</span>
-                        <h4 class="text-xl font-bold my-2" style="color: #3E2723;">Step 4: Assembly</h4>
-                        <p class="text-sm" style="color: #6D4C41;">Combine all snippets into your `script.py`, place it in the "Magic Folder," and test the final tool.</p>
-                    </div>
+<span class="text-slate-500"># --- pyREVIT (NEW) ---</span>
+<span class="text-green-300">from pyrevit import revit, forms</span>
+
+<span class="text-green-300"># 1. Get Selection from UI</span>
+<span class="text-green-300">selection = revit.get_selection()</span>
+
+<span class="text-green-300"># 2. Safety Check</span>
+<span class="text-green-300">if not selection:</span>
+<span class="text-green-300">    forms.alert("Please select elements first!")</span></code></pre>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <section id="gotchas" class="mb-16 space-y-8 scroll-mt-20">
-                <h2 class="text-3xl font-bold" style="color: #6D4C41;">Common "Gotchas" & Fixes</h2>
-                <p class="text-lg mb-6" style="color: #6D4C41;">AI makes common, predictable mistakes. This section covers the top failures you'll encounter and the exact prompts to fix them. Click each "Gotcha" to reveal the solution.</p>
-                <div class="space-y-4">
-                    <div class="accordion-item bg-white rounded-lg shadow-lg">
-                        <button class="accordion-header flex justify-between items-center w-full p-6 text-left">
-                            <span class="text-xl font-semibold" style="color: #3E2723;">Gotcha 1: Unit Conversion Errors</span>
-                            <span class="text-2xl font-semibold" style="color: #4682B4;">+</span>
-                        </button>
-                        <div class="accordion-content px-6 pb-6">
-                            <p class="mb-4" style="color: #6D4C41;"><strong>The Problem:</strong> You ask for a 5-foot offset, and the code creates an offset 5 units (e.g., 5mm) wide, or it fails. The AI forgets that Revit's API uses internal units (decimal feet).</p>
-                            <p class="p-4 rounded-lg" style="background-color: #F0F8FF; color: #3E2723;"><strong>The Fix (Prompt):</strong> "Use `UnitUtils.ConvertToInternalUnits` to handle the units correctly."</p>
-                        </div>
+        <!-- View: CAPSTONE -->
+        <section id="capstone" class="view-section hidden p-8 md:p-12 max-w-4xl mx-auto space-y-12 fade-in">
+             <div class="border-b border-slate-200 pb-6">
+                <span class="text-orange-600 font-bold tracking-wide uppercase text-sm">Capstone Project</span>
+                <h2 class="text-4xl font-bold text-slate-900 mt-2">BIM Manager Suite</h2>
+            </div>
+
+            <div class="bg-orange-50 border border-orange-200 p-6 rounded-xl">
+                <h3 class="font-bold text-orange-900 text-lg mb-2">The Assignment</h3>
+                <p class="text-orange-800">You will assemble a single Extension containing 4 specific tools. This represents a real-world deliverable you would create for a firm.</p>
+            </div>
+
+            <div class="grid gap-8">
+                <!-- Tool 1 -->
+                <div class="bg-white rounded-xl shadow border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <h3 class="font-bold text-slate-800">1. Sheet Creator</h3>
+                        <span class="text-xs font-mono bg-white border border-slate-200 px-2 py-1 rounded">CreateSheets.pushbutton</span>
                     </div>
-                    <div class="accordion-item bg-white rounded-lg shadow-lg">
-                        <button class="accordion-header flex justify-between items-center w-full p-6 text-left">
-                            <span class="text-xl font-semibold" style="color: #3E2723;">Gotcha 2: Outdated API Methods</span>
-                            <span class="text-2xl font-semibold" style="color: #4682B4;">+</span>
-                        </button>
-                        <div class="accordion-content px-6 pb-6">
-                            <p class="mb-4" style="color: #6D4C41;"><strong>The Problem:</strong> The AI uses old, deprecated methods like `Parameter.Set()` which fail in modern Revit versions, as it was trained on older data.</p>
-                            <p class="p-4 rounded-lg" style="background-color: #F0F8FF; color: #3E2723;"><strong>The Fix (Prompt):</strong> "This is for Revit 2025. Please use the most current API methods."</p>
-                        </div>
-                    </div>
-                    <div class="accordion-item bg-white rounded-lg shadow-lg">
-                        <button class="accordion-header flex justify-between items-center w-full p-6 text-left">
-                            <span class="text-xl font-semibold" style="color: #3E2723;">Gotcha 3: Inefficient Transactions</span>
-                            <span class="text-2xl font-semibold" style="color: #4682B4;">+</span>
-                        </button>
-                        <div class="accordion-content px-6 pb-6">
-                            <p class="mb-4" style="color: #6D4C41;"><strong>The Problem:</strong> You try to rename 1000 views, and it takes 5 minutes. The AI put the `Transaction.Start()` and `Transaction.Commit()` *inside* the `for` loop, creating 1000 individual undo states.</p>
-                            <p class="p-4 rounded-lg" style="background-color: #F0F8FF; color: #3E2723;"><strong>The Fix (Prompt):</strong> "This is slow. Please 'batch the transaction' by wrapping the entire loop in a single transaction for performance."</p>
+                    <div class="p-6">
+                        <p class="text-sm text-slate-600 mb-4">Reads a CSV (Number, Name) and generates new ViewSheets.</p>
+                        <div class="bg-slate-900 rounded p-4 overflow-x-auto">
+<pre class="text-xs text-yellow-100"><code># Logic Snippet
+title_block = forms.select_titleblocks()
+new_sheet = ViewSheet.Create(doc, title_block.Id)
+new_sheet.Name = row[1]
+new_sheet.SheetNumber = row[0]</code></pre>
                         </div>
                     </div>
                 </div>
-            </section>
 
-            <footer class="text-center mt-16 pt-8 border-t" style="border-color: #E0E0E0;">
-                <h3 class="text-2xl font-semibold mb-4" style="color: #3E2723;">Recommended Resources</h3>
-                <div class="flex justify-center space-x-6" style="color: #4682B4;">
-                    <a href="https://www.revitapidocs.com/" target="_blank" class="hover:underline">Revit API Docs</a>
-                    <a href="https://pyrevitlabs.notion.site/" target="_blank" class="hover:underline">pyRevit Developer Docs</a>
-                    <a href="https://primer.dynamobim.org/10_Custom-Nodes/10-1_Introduction.html" target="_blank" class="hover:underline">Dynamo Python Primer</a>
+                <!-- Tool 2 -->
+                <div class="bg-white rounded-xl shadow border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <h3 class="font-bold text-slate-800">2. Batch Renamer</h3>
+                        <span class="text-xs font-mono bg-white border border-slate-200 px-2 py-1 rounded">BatchRename.pushbutton</span>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-slate-600 mb-4">Adds a User-Input Prefix or Suffix to all selected sheets.</p>
+                        <div class="bg-slate-900 rounded p-4 overflow-x-auto">
+<pre class="text-xs text-yellow-100"><code># Logic Snippet
+prefix = forms.ask_for_string("Enter Prefix")
+for sheet in selection:
+    sheet.SheetNumber = "{}{}".format(prefix, sheet.SheetNumber)</code></pre>
+                        </div>
+                    </div>
                 </div>
-            </footer>
 
-        </main>
-    </div>
+                <!-- Tool 3 -->
+                <div class="bg-white rounded-xl shadow border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <h3 class="font-bold text-slate-800">3. CSV Family Placer</h3>
+                        <span class="text-xs font-mono bg-white border border-slate-200 px-2 py-1 rounded">CSVPlacer.pushbutton</span>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-slate-600 mb-4">Places family instances at X,Y,Z coordinates defined in a file.</p>
+                        <div class="bg-slate-900 rounded p-4 overflow-x-auto">
+<pre class="text-xs text-yellow-100"><code># Critical Safety Check
+if not symbol.IsActive:
+    symbol.Activate()
+    doc.Regenerate()
+
+# Creation
+doc.Create.NewFamilyInstance(point, symbol, level, StructuralType.NonStructural)</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        // State Management
+        let currentView = 'home';
+        const views = ['home', 'module1', 'module2', 'module3', 'capstone'];
+        const progressBar = document.getElementById('progress-bar');
+        const sidebar = document.getElementById('sidebar');
+
+        // Navigation Function
+        function navigate(viewId) {
+            // Hide all views
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
             
-            const sections = document.querySelectorAll('section[id]');
-            const navLinks = document.querySelectorAll('.sticky-nav a');
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        navLinks.forEach(link => {
-                            link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
-                        });
-                    }
-                });
-            }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
-
-            sections.forEach(section => {
-                observer.observe(section);
+            // Show target view
+            document.getElementById(viewId).classList.remove('hidden');
+            
+            // Update Sidebar Active State
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-800', 'text-blue-400');
+                btn.classList.add('text-slate-400', 'hover:bg-slate-800', 'hover:text-white');
             });
 
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const targetId = e.currentTarget.getAttribute('href').substring(1);
-                    const targetElement = document.getElementById(targetId);
-                    if (targetElement) {
-                        targetElement.scrollIntoView({ behavior: 'smooth' });
-                    }
-                });
-            });
+            const activeBtn = document.getElementById('btn-' + viewId);
+            if(activeBtn) {
+                activeBtn.classList.remove('text-slate-400', 'hover:bg-slate-800', 'hover:text-white');
+                activeBtn.classList.add('bg-slate-800', 'text-blue-400');
+            }
 
-            const accordionHeaders = document.querySelectorAll('.accordion-header');
-            accordionHeaders.forEach(header => {
-                header.addEventListener('click', () => {
-                    const content = header.nextElementSibling;
-                    const isOpen = content.style.display === 'block';
-                    
-                    document.querySelectorAll('.accordion-content').forEach(c => {
-                        c.style.display = 'none';
-                        c.previousElementSibling.querySelector('span:last-child').textContent = '+';
-                    });
-                    
-                    if (!isOpen) {
-                        content.style.display = 'block';
-                        header.querySelector('span:last-child').textContent = '−';
-                    }
-                });
-            });
+            // Update Progress Bar
+            const index = views.indexOf(viewId);
+            const progress = ((index) / (views.length - 1)) * 100;
+            progressBar.style.width = `${progress}%`;
 
-            const tabButtons = document.querySelectorAll('.tab-btn');
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    tabButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    
-                    const tabId = button.getAttribute('data-tab');
-                    tabContents.forEach(content => {
-                        content.classList.toggle('active', content.id === tabId);
-                    });
-                });
-            });
+            // Scroll to top
+            document.querySelector('main').scrollTop = 0;
+            currentView = viewId;
+
+            // Close sidebar on mobile
+            if(window.innerWidth < 768) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        }
+
+        // Toggle Sidebar (Mobile)
+        function toggleSidebar() {
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        // Module 2 Tab Switcher
+        function switchTab(tab) {
+            const contentOld = document.getElementById('content-old');
+            const contentNew = document.getElementById('content-new');
+            const tabOld = document.getElementById('tab-old');
+            const tabNew = document.getElementById('tab-new');
+
+            if (tab === 'old') {
+                contentOld.classList.remove('hidden');
+                contentNew.classList.add('hidden');
+                
+                tabOld.classList.add('text-purple-600', 'border-purple-600', 'bg-purple-50');
+                tabOld.classList.remove('text-slate-500', 'border-transparent');
+                
+                tabNew.classList.remove('text-purple-600', 'border-purple-600', 'bg-purple-50');
+                tabNew.classList.add('text-slate-500', 'border-transparent');
+            } else {
+                contentOld.classList.add('hidden');
+                contentNew.classList.remove('hidden');
+                
+                tabNew.classList.add('text-purple-600', 'border-purple-600', 'bg-purple-50');
+                tabNew.classList.remove('text-slate-500', 'border-transparent');
+                
+                tabOld.classList.remove('text-purple-600', 'border-purple-600', 'bg-purple-50');
+                tabOld.classList.add('text-slate-500', 'border-transparent');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            navigate('home');
         });
     </script>
 </body>

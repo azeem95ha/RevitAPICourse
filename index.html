@@ -30,6 +30,11 @@
         .tree-item::before {
             content: ''; position: absolute; left: -14px; top: 14px; width: 12px; height: 2px; background-color: #cbd5e1;
         }
+        
+        /* Sub-tab active state */
+        .sub-tab-active { border-bottom: 2px solid #2563eb; color: #2563eb; background-color: #eff6ff; }
+        .sub-tab-inactive { border-bottom: 2px solid transparent; color: #64748b; }
+        .sub-tab-inactive:hover { background-color: #f8fafc; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 h-screen flex overflow-hidden">
@@ -193,6 +198,38 @@
                 </div>
             </div>
 
+            <!-- Perfect Prompt Template -->
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                <h3 class="text-lg font-bold text-blue-900 mb-4">The "Perfect Prompt" Template</h3>
+                <div class="bg-white rounded-lg p-4 border border-blue-100 shadow-sm font-mono text-sm text-slate-700">
+                    <p><span class="text-slate-400"># Role</span><br>
+                    You are an expert Revit API developer.</p>
+                    <p class="mt-2"><span class="text-slate-400"># Task</span><br>
+                    Write a Python script for [Dynamo/pyRevit] that [Insert Goal Here].</p>
+                    <p class="mt-2"><span class="text-slate-400"># Constraints</span><br>
+                    1. Use the Revit [Year] API.<br>
+                    2. Use Python 3.<br>
+                    3. Include comments explaining the logic.<br>
+                    4. [Optional] Import the Geometry library.</p>
+                </div>
+            </div>
+
+            <!-- Exercise Comparison -->
+            <div>
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">Exercise: Hide Furniture</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-red-50 p-6 rounded-xl border border-red-100">
+                        <h4 class="font-bold text-red-800 mb-2">❌ Bad Prompt</h4>
+                        <p class="text-sm text-red-700 italic">"Hide all the furniture."</p>
+                        <p class="text-xs text-red-600 mt-2">Vague. Might hide furniture in all views, or delete it, or fail to find the category.</p>
+                    </div>
+                    <div class="bg-green-50 p-6 rounded-xl border border-green-100">
+                        <h4 class="font-bold text-green-800 mb-2">✅ Good Prompt</h4>
+                        <p class="text-sm text-green-800 mb-2"><strong>Role:</strong> Python Developer.<br><strong>Task:</strong> Find elements of category `OST_Furniture` in the Active View. Hide them.<br><strong>Constraint:</strong> Check if already hidden. Use Revit 2024 API.</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Debugging Loop -->
             <div>
                 <h3 class="text-2xl font-bold text-slate-800 mb-6">2. The Iterative Debugging Loop</h3>
@@ -270,8 +307,17 @@
 
                     <!-- Tab Content: NEW -->
                     <div id="content-new" class="block">
-                        <h4 class="font-bold text-slate-800 mb-4">Task: Bulk Rename Views</h4>
-                        <div class="bg-slate-900 rounded-lg p-4 overflow-x-auto code-scroll">
+                        <!-- Lab Tabs -->
+                        <div class="flex space-x-2 mb-4 border-b border-slate-100 pb-2">
+                            <button onclick="switchLab('lab-a')" id="btn-lab-a" class="sub-tab-active px-3 py-1 text-sm font-medium rounded-t">Lab A: Renamer</button>
+                            <button onclick="switchLab('lab-b')" id="btn-lab-b" class="sub-tab-inactive px-3 py-1 text-sm font-medium rounded-t">Lab B: Grid</button>
+                            <button onclick="switchLab('lab-c')" id="btn-lab-c" class="sub-tab-inactive px-3 py-1 text-sm font-medium rounded-t">Lab C: Data</button>
+                        </div>
+
+                        <!-- Lab A: Renamer -->
+                        <div id="lab-a" class="lab-content">
+                            <h4 class="font-bold text-slate-800 mb-2">Task: Bulk Rename Views (Prefix)</h4>
+                            <div class="bg-slate-900 rounded-lg p-4 overflow-x-auto code-scroll">
 <pre class="text-sm text-blue-100"><code>import clr
 clr.AddReference('RevitServices')
 from RevitServices.Persistence import DocumentManager
@@ -292,7 +338,60 @@ for view in views:
 
 TransactionManager.Instance.TransactionTaskDone()
 OUT = views</code></pre>
+                            </div>
                         </div>
+
+                        <!-- Lab B: Geometry Grid -->
+                        <div id="lab-b" class="lab-content hidden">
+                            <h4 class="font-bold text-slate-800 mb-2">Task: Create 10x10 Grid (Geometry Trap)</h4>
+                            <div class="bg-slate-900 rounded-lg p-4 overflow-x-auto code-scroll">
+<pre class="text-sm text-blue-100"><code>import clr
+# Import Revit API Geometry, NOT Dynamo Geometry
+clr.AddReference('RevitAPI')
+from Autodesk.Revit.DB import XYZ, Line
+
+points = []
+for x in range(0, 100, 10):
+    for y in range(0, 100, 10):
+        # Use XYZ for Revit elements, not Point.ByCoordinates
+        p1 = XYZ(x, y, 0)
+        p2 = XYZ(x, y, 10)
+        # Often requires a Transaction to create Model Lines
+        # This example just outputs points for checking
+        points.append(p1)
+
+OUT = points</code></pre>
+                            </div>
+                            <div class="mt-4 bg-yellow-50 p-3 rounded border border-yellow-200 text-xs text-yellow-800">
+                                <strong>Comparison:</strong> Dynamo uses `Point.ByCoordinates`. Revit API uses `XYZ`. AI often mixes them up.
+                            </div>
+                        </div>
+
+                        <!-- Lab C: Data Mining -->
+                        <div id="lab-c" class="lab-content hidden">
+                            <h4 class="font-bold text-slate-800 mb-2">Task: Sum Wall Volumes (Collector)</h4>
+                            <div class="bg-slate-900 rounded-lg p-4 overflow-x-auto code-scroll">
+<pre class="text-sm text-blue-100"><code>import clr
+clr.AddReference('RevitAPI')
+from Autodesk.Revit.DB import FilteredElementCollector, BuiltInCategory, BuiltInParameter
+
+doc = DocumentManager.Instance.CurrentDBDocument
+
+# The Collector: Fast database query
+walls = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Walls).WhereElementIsNotElementType().ToElements()
+
+total_volume = 0.0
+
+for wall in walls:
+    # Use built-in parameter for stability
+    vol_param = wall.get_Parameter(BuiltInParameter.HOST_VOLUME_COMPUTED)
+    if vol_param:
+        total_volume += vol_param.AsDouble()
+
+OUT = total_volume</code></pre>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -318,7 +417,7 @@ OUT = views</code></pre>
                     </ul>
                 </div>
                 <div class="bg-slate-100 p-6 rounded-lg border border-slate-200">
-                    <h4 class="font-bold text-slate-800 mb-4">Lab B: Geometry Trap</h4>
+                    <h4 class="font-bold text-slate-800 mb-4">The "XYZ" Trap</h4>
                     <p class="text-sm text-slate-600 mb-4">AI often confuses Dynamo Points with Revit Points.</p>
                     <div class="space-y-4">
                         <div class="bg-red-50 p-3 rounded border border-red-100">
@@ -404,8 +503,65 @@ OUT = views</code></pre>
                 </div>
             </div>
 
+            <!-- Practical Examples -->
+            <div class="mt-8">
+                <h3 class="font-bold text-lg text-slate-800 mb-4">Practical pyRevit Examples</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Example 1 -->
+                    <div class="bg-white rounded-lg shadow p-4 border border-slate-200">
+                        <div class="flex items-center mb-2">
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded uppercase mr-2">Ex 1</span>
+                            <h4 class="font-bold text-slate-800">Hello World (The Basics)</h4>
+                        </div>
+                        <div class="bg-slate-900 rounded p-3 overflow-x-auto">
+<pre class="text-xs text-emerald-100"><code>from pyrevit import forms
+
+# Simple UI pop-up
+forms.alert("Hello! I am a button.", title="Success")</code></pre>
+                        </div>
+                    </div>
+                    
+                    <!-- Example 2 -->
+                    <div class="bg-white rounded-lg shadow p-4 border border-slate-200">
+                        <div class="flex items-center mb-2">
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded uppercase mr-2">Ex 2</span>
+                            <h4 class="font-bold text-slate-800">Selection Inspector</h4>
+                        </div>
+                        <div class="bg-slate-900 rounded p-3 overflow-x-auto">
+<pre class="text-xs text-emerald-100"><code>from pyrevit import revit, forms
+
+# Replaces IN[0]
+selection = revit.get_selection()
+
+if not selection:
+    forms.alert("Select something!")
+else:
+    forms.alert("Selected: {}".format(len(selection)))</code></pre>
+                        </div>
+                    </div>
+
+                     <!-- Example 3 -->
+                     <div class="bg-white rounded-lg shadow p-4 border border-slate-200 col-span-1 md:col-span-2">
+                        <div class="flex items-center mb-2">
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded uppercase mr-2">Ex 3</span>
+                            <h4 class="font-bold text-slate-800">Transactional Change (Mark Comments)</h4>
+                        </div>
+                        <div class="bg-slate-900 rounded p-3 overflow-x-auto">
+<pre class="text-xs text-emerald-100"><code>from pyrevit import revit, DB
+
+# 'with' handles Transaction Start/Commit automatically
+with revit.Transaction("Mark Checked"):
+    for element in revit.get_selection():
+        param = element.LookupParameter("Comments")
+        if param:
+            param.Set("Checked by AI")</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Migration Guide -->
-            <div>
+            <div class="mt-8">
                 <h3 class="font-bold text-lg text-slate-800 mb-4">Migration: Dynamo vs pyRevit</h3>
                 <div class="bg-slate-900 rounded-lg p-6 overflow-x-auto code-scroll">
 <pre class="text-sm text-blue-100"><code><span class="text-slate-500"># --- DYNAMO (OLD) ---</span>
@@ -475,7 +631,27 @@ for sheet in selection:
                 <!-- Tool 3 -->
                 <div class="bg-white rounded-xl shadow border border-slate-200 overflow-hidden">
                     <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
-                        <h3 class="font-bold text-slate-800">3. CSV Family Placer</h3>
+                        <h3 class="font-bold text-slate-800">3. Find & Replace</h3>
+                        <span class="text-xs font-mono bg-white border border-slate-200 px-2 py-1 rounded">FindReplace.pushbutton</span>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-slate-600 mb-4">Fixes naming conventions instantly across hundreds of sheets.</p>
+                        <div class="bg-slate-900 rounded p-4 overflow-x-auto">
+<pre class="text-xs text-yellow-100"><code># Logic Snippet
+find_text = forms.ask_for_string("Find:")
+replace_text = forms.ask_for_string("Replace with:")
+
+for sheet in selection:
+    if find_text in sheet.Name:
+        sheet.Name = sheet.Name.replace(find_text, replace_text)</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool 4 -->
+                <div class="bg-white rounded-xl shadow border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <h3 class="font-bold text-slate-800">4. CSV Family Placer</h3>
                         <span class="text-xs font-mono bg-white border border-slate-200 px-2 py-1 rounded">CSVPlacer.pushbutton</span>
                     </div>
                     <div class="p-6">
@@ -543,7 +719,7 @@ doc.Create.NewFamilyInstance(point, symbol, level, StructuralType.NonStructural)
             sidebar.classList.toggle('-translate-x-full');
         }
 
-        // Module 2 Tab Switcher
+        // Module 2 Tab Switcher (Old vs New)
         function switchTab(tab) {
             const contentOld = document.getElementById('content-old');
             const contentNew = document.getElementById('content-new');
@@ -569,6 +745,27 @@ doc.Create.NewFamilyInstance(point, symbol, level, StructuralType.NonStructural)
                 tabOld.classList.remove('text-purple-600', 'border-purple-600', 'bg-purple-50');
                 tabOld.classList.add('text-slate-500', 'border-transparent');
             }
+        }
+
+        // Module 2 Lab Switcher (Lab A, B, C)
+        function switchLab(labId) {
+            // Hide all lab contents
+            document.querySelectorAll('.lab-content').forEach(el => el.classList.add('hidden'));
+            
+            // Show selected lab
+            document.getElementById(labId).classList.remove('hidden');
+
+            // Reset Tab styles
+            ['btn-lab-a', 'btn-lab-b', 'btn-lab-c'].forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                btn.classList.remove('sub-tab-active');
+                btn.classList.add('sub-tab-inactive');
+            });
+
+            // Set active tab style
+            const activeBtn = document.getElementById('btn-' + labId);
+            activeBtn.classList.remove('sub-tab-inactive');
+            activeBtn.classList.add('sub-tab-active');
         }
 
         // Initialize
